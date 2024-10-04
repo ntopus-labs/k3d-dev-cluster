@@ -1,0 +1,9 @@
+agent:
+  # If `true`, installs the ambassador-agent Deployment, ServiceAccount and ClusterRole in the ambassador namespace, enabling the Ambassador Cloud connectivity.
+  enabled: false
+
+prometheusExporter: # +doc-gen:break
+  enabled: true
+
+# Number of Ambassador replicas
+replicaCount: 1
