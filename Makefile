@@ -32,7 +32,7 @@ create-k8s-cluster: ## Create cluster using k3d
 rm-k8s-cluster: ## Remove cluster using k3d
 	k3d cluster rm ntopus-lab
 
-setup-k8s-cluster: setup-k8s-gw-api load-application-in-k8s ## Setup cluster to initialize GW and defualt services
+setup-k8s-cluster: add-prometheus-stack-helm setup-k8s-gw-api load-application-in-k8s ## Setup cluster to initialize GW and defualt services
 
 setup-k8s-gw-api: add-datawire-helm install-emissary-ingress apply-emmisary-ingress-routes
 
@@ -51,8 +51,14 @@ install-emissary-ingress:
 	helm install emissary-ingress --namespace emissary datawire/emissary-ingress --version=${EMISSARY_INGRESS_HELM_VER} --set image.tag=${EMISSARY_INGRESS_IMAGE_VER} --values helm-emissary-ingress-values.yaml && \
 	kubectl -n emissary wait --for condition=available --timeout=90s deploy -lapp.kubernetes.io/instance=emissary-ingress
 
+add-prometheus-stack-helm:
+	kubectl create namespace monitoring
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo update
+	helm install --namespace monitoring --generate-name prometheus-community/kube-prometheus-stack
+
 apply-emmisary-ingress-routes:
 	kubectl apply -f ./emissary-ingress/
 
 load-application-in-k8s:
-	kubectl apply -f https://app.getambassador.io/yaml/v2-docs/${EMISSARY_INGRESS_IMAGE_VER}/quickstart/qotm.yaml
+	kubectl apply -f ./demo-app/

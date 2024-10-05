@@ -2,8 +2,9 @@
 apiVersion: getambassador.io/v3alpha1
 kind: Mapping
 metadata:
-  name: quote-backend
+  name: emoji-vote
 spec:
   hostname: "*"
-  prefix: /backend/
-  service: quote
+  prefix: /
+  service: web-svc.emojivoto.svc
+
